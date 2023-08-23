@@ -1,0 +1,15 @@
+#menu-container{
+  display: flex;
+  align-items: center;
+  position: fixed; /* Position fixe pour le bouton */
+  top: 3%; /* Positionnement en haut */
+  left: 2%; /* Positionnement à gauche */
+  width: 25%;
+  height: 10%;
+}
+
+.item-menu{
+  width: 100%;
+  height: 100%;
+  padding-right: 10%;
+}

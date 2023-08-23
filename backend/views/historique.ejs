@@ -1,0 +1,287 @@
+<!--
+  Auteur: Nathan Lesourd
+	Date: 17/06/2023
+	Version: 1.0
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" type="image/ico" href="/assets/img/favicon.ico"/>
+  <script src="/assets/js/vue.js"></script>
+  <script src="/assets/js/chart.js"></script>
+  <script src="/assets/js/chartjs-plugin-annotation.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/assets/js/chartjs-plugin-datalabels.js"></script>
+
+  <title>Délais CH | Historique</title>
+  
+  <link href="/assets/css/main.css" rel="stylesheet">
+  <link href="/assets/css/historique.css" rel="stylesheet">
+  <link href="/assets/css/menu-bar.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <div class="head-container">
+    <div class="title">Historique</div>
+
+    <!-- Options de redirection -->
+    <div id="menu-container">
+      <a class="item-menu" href="/"> <img class="item-menu" src="/assets/img/home.svg" class="floating-img"> </a>
+      <a class="item-menu" href="/parametre"> <img class="item-menu" src="/assets/img/settings.svg" class="floating-img"> </a>
+      <a class="item-menu" href="/historique"> <img class="item-menu" src="/assets/img/bar_chart.svg" class="floating-img"> </a>
+      <a class="item-menu" href="/aide"> <img class="item-menu" src="/assets/img/aide.svg" class="floating-img"> </a>
+    </div>
+  </div>
+
+  <div class="sub-container">
+    <div class="file-arianne">
+      > historique
+    </div>
+
+    <div id="titre-temporalite"> <%= temporalite %> </div>
+  </div>
+
+  <div id="histogram-container">
+    <canvas id="histogram-chart"></canvas>
+  </div>
+
+  <div id="reglages">
+    <div id="tempo-container">
+      <div class="temporalite" v-for="temporalite in temporalites" @click="handleTempoClick(temporalite)"> {{ temporalite }} </div>
+    </div>
+    <select>
+      <option v-for="box in boxes" :value="box" :selected="isSelected(box)" @click="handleOptionClick(box)"> {{ box }} </option>
+    </select>
+
+  </div>
+
+ 
+
+</body>
+
+<footer>
+
+  <!-- Rafraichissement de la page toutes les 10 minutes -->
+  <script>
+    const minutes = 5;
+    const refreshInterval = minutes*60*1000;
+    setInterval(() => {
+      window.location.reload();
+    }, refreshInterval);
+  </script>
+
+  <script>
+    // Envoie d'une requête POST
+    function sendPostRequest(url) {
+      fetch(url, {
+        method: 'POST'
+      })
+      .then(response => {
+        if (response.ok) {
+          console.log('Requête POST réussie');
+          // Effectuer des actions supplémentaires si nécessaire
+        } else {
+          console.log('Erreur lors de la requête POST');
+        }
+      })
+      .catch(error => {
+        console.log('Erreur lors de la requête POST:', error);
+      });
+    }
+
+    // Fonction exécutée au chargement de la page
+    window.addEventListener('load', function() {
+      // URL de la requête POST
+      var urlCourante = window.location.href;
+      // Envoi de la requête POST
+      sendPostRequest(urlCourante);
+    });
+  </script>
+
+  <script>
+    var urlCourante = window.location.href;
+
+    // Utilisez fetch pour récupérer les données du serveur
+    fetch(urlCourante, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Récupérez les données du graphique depuis la réponse JSON
+
+      const chartData = {
+          labels: data.tempsAcquisition,
+          datasets: [{
+            label: "Délai moyen en minute", 
+            data: data.moyenneDelai,
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            borderColor: 'rgba(0, 0, 0, 1)',
+            borderWidth: 1
+
+          }]
+      };
+
+      const plugins = {
+        legend: {
+          display: false
+        },
+        autocolors: false,
+        datalabels: {
+          formatter: function(value, context){
+            var nombrePassage = data.nombrePassage[context.dataIndex];
+            if(nombrePassage === 0){
+              return '';
+            }else{
+              return nombrePassage+" VSAV";
+            };
+          },
+          font: {
+            size: 20
+          },
+          rotation: -90
+        },
+        annotation: {
+          annotations: {
+            lineAlerte: {
+              adjustScaleRange: true,
+              drawTime: 'afterDatasetsDraw',
+              yMin: data.seuilAlerte,
+              yMax: data.seuilAlerte,
+              borderColor: 'rgb(255, 99, 132)',
+              borderWidth: 5,
+              label: {
+                enabled: true,
+                content: 'Seuil alerte', // Étiquette de la ligne
+              }
+            },
+            linePreAlerte: {
+              adjustScaleRange: true,
+              drawTime: 'afterDatasetsDraw',
+              yMin: data.seuilPreAlerte,
+              yMax: data.seuilPreAlerte,
+              borderColor: 'rgb(255, 212, 132)',
+              borderWidth: 5,
+              label: {
+                enabled: true,
+                content: 'Seuil pré-alerte', // Étiquette de la ligne
+              }
+            }
+            
+          }
+        }
+      };
+
+      const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        aspectRatio: 3,
+        scales: {
+          x: {
+            ticks: {
+              font:{
+                size: 20
+              }
+            }
+          },
+          y: {
+            suggestedMax: data.seuilAlerte + 5,
+            title: {
+              display:true,
+              text:'Délai moyen (min)',
+              font:{
+                size: 30
+              },
+            },
+            ticks: {
+              font:{
+                size: 20
+              }
+            }
+          }
+        },
+        plugins: plugins
+      };
+
+      /*
+        
+
+      */
+
+      // Instanciez le graphique avec les données
+      var canvas = document.getElementById('histogram-chart').getContext('2d');
+      var myChart = new Chart(canvas, {
+        type: 'bar',
+        data: chartData, 
+        options: options,
+        plugins: [ChartDataLabels]
+      });
+    })
+    .catch(error => {
+      console.log('Erreur lors de la récupération des données du graphique:', error);
+    });
+
+  </script>
+
+  <script>
+    new Vue({
+      el: '#reglages',
+      data: {
+        selectedOption: '',
+        selectedTempo: '',
+        boxes: [
+          "CHU Rouen",
+          "CHG Dieppe",
+          "CHG Monod",
+          "CHG Elbeuf",
+          "CH Fécamp",
+          "CH Lillebonne"
+        ],
+        temporalites: [
+          "J",
+          "J-1",
+          "S",
+          "S-1"
+        ]
+      },
+      created(){
+        const url = window.location.href;
+        const urlParts = url.split('/');
+        this.selectedOption = urlParts[urlParts.length -1].replace(/%20/g," ").replace(/%C3%A9/g,"é"); // replace pour gérer les caractères spéciaux
+        this.selectedTempo = urlParts[urlParts.length -2]; 
+      },
+      methods: {
+        handleOptionClick(selectedValue) {
+          window.location.href = '/historique/'+ this.selectedTempo + "/" + selectedValue;
+        },
+        handleTempoClick(tempo) {
+          if(tempo === "J"){
+            window.location.href = '/historique/journee/' + this.selectedOption;
+          }
+          if(tempo === "J-1"){
+            window.location.href = '/historique/veille/' + this.selectedOption;
+          }
+          if(tempo === "S"){
+            window.location.href = '/historique/semaine/' + this.selectedOption;
+          }
+          if(tempo === "S-1"){
+            window.location.href = '/historique/semainePrecedente/' + this.selectedOption;
+          }
+          
+        },
+        isSelected(value){
+          return value === this.selectedOption;
+        }
+      }
+    });
+  </script>
+
+</footer>
+
+</html>

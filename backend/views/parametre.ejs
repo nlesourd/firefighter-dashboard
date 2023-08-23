@@ -1,0 +1,136 @@
+<!--
+  Auteur: Nathan Lesourd
+	Date: 17/06/2023
+	Version: 1.0
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" type="image/ico" href="/assets/img/favicon.ico"/>
+  <script src="/assets/js/vue.js"></script>
+  
+  <title>Délais CH | Paramètres</title>
+  
+  <link href="/assets/css/main.css" rel="stylesheet">
+  <link href="/assets/css/parametre.css" rel="stylesheet">
+  <link href="/assets/css/menu-bar.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <div class="head-container">
+    <div class="title">Paramètres</div>
+  
+    <!-- Options de redirection -->
+    <div id="menu-container">
+      <a class="item-menu" href="/"> <img class="item-menu" src="/assets/img/home.svg" class="floating-img"> </a>
+      <a class="item-menu" href="/parametre"> <img class="item-menu" src="/assets/img/settings.svg" class="floating-img"> </a>
+      <a class="item-menu" href="/historique"> <img class="item-menu" src="/assets/img/bar_chart.svg" class="floating-img"> </a>
+      <a class="item-menu" href="/aide"> <img class="item-menu" src="/assets/img/aide.svg" class="floating-img"> </a>
+    </div>
+  </div>
+
+  <div class="sub-container">
+    <div class="file-arianne">
+      > paramètres
+    </div>
+
+    <% if (erreurSeuilPreAlerte || erreurSeuilAlerte) { %>
+      <p id="erreur-seuil">Veuillez saisir une valeur correcte</p>
+    <% } %>
+  </div>
+  
+  <table class="reglages">
+    <tr>
+      <td>
+        <select>
+          <option class="select-option" v-for="box in boxes" :value="box" :selected="isSelected(box)" @click="handleOptionClick(box)"> {{ box }} </option>
+        </select>
+      </td>
+
+      <td class="item" id="titre-valeur">Valeur actuelle
+        (en minute)</td>
+
+      <td class="item" id="titre-valeur">Nouvelle valeur
+        (en minute)</td>
+    </tr>
+  </table>
+
+  <table class="reglages" id="table-parametres">    
+    <tr>
+      <td class="intitule">Seuil alerte</td>
+
+      <td class="item"> <%= seuils[0].seuilAlerte %> </td>
+
+      <td>
+        <form class="item" action="" method="post">
+          <input class="form-value" type="number" id="setAlerte" name="seuilAlerte" required />
+        </form>
+      </td>
+    </tr>
+
+      
+    <tr>
+      <td class="intitule">Seuil pré-alerte</td>
+
+      <td class="item"> <%= seuils[0].seuilPreAlerte %> </td>
+
+      <td>
+        <form class="item" action="" method="post">
+          <input class="form-value" type="number" id="setPreAlerte" name="seuilPreAlerte" />
+        </form>
+      </td>
+    </tr>
+  </table>
+
+</body>
+
+<footer>
+
+  <!-- Rafraichissement de la page toutes les 10 minutes -->
+  <script>
+    const minutes = 5;
+    const refreshInterval = minutes*60*1000;
+    setInterval(() => {
+      window.location.reload();
+    }, refreshInterval);
+  </script>
+
+  <script>
+    new Vue({
+      el: '.reglages',
+      data: {
+        selectedOption: '',
+        boxes: [
+          "CHU Rouen",
+          "CHG Dieppe",
+          "CHG Monod",
+          "CHG Elbeuf",
+          "CH Fécamp",
+          "CH Lillebonne"
+        ]
+      },
+      created(){
+        const url = window.location.href;
+        const urlParts = url.split('/');
+        this.selectedOption = urlParts[urlParts.length -1].replace(/%20/g," ").replace(/%C3%A9/g,"é"); // replace pour gérer les caractères spéciaux
+      },
+      methods: {
+        handleOptionClick(selectedValue) {
+          window.location.href = '/parametre/' + selectedValue;
+        },
+        isSelected(value){
+          return value === this.selectedOption;
+        }
+      }
+    });
+  </script>
+
+
+</footer>
+
+</html>

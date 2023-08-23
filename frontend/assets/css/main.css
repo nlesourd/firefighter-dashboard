@@ -1,0 +1,80 @@
+@font-face {
+  font-family: 'Poppins';
+  src: url('/assets/font/Poppins-Regular.ttf');
+}
+
+* {
+  font-size: 7vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background-color: #f7f8fc;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+}
+
+.head-container {
+  height: 15%;
+  display: flex;
+  background-color: white;
+  border-bottom: solid 2px #949597;
+}
+
+.sub-container{
+  height: 10%;
+  display: flex;
+  justify-content: center; /* Centrage horizontal */
+}
+
+.file-arianne{
+  position: fixed; /* Position fixe pour le bouton */
+  left: 3%; /* Positionnement à gauche */
+  font-size: 5vh;
+  opacity: 0.5;
+}
+
+.title {
+  position: fixed; /* Position fixe pour le bouton */
+  top: 3%; /* Positionnement en haut */
+  right: 3%; /* Positionnement à gauche */
+  font-weight: bold;
+}
+
+select{
+  font-size: 5vh;
+  text-align: center;
+  background-color: #ffffff;
+  border: 2px solid #949597;
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-left:auto;
+}
+
+select:focus{
+  border: 3px solid rgb(30, 94, 233) ;
+}
+
+select:hover{
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+select option{
+  font-size: 5vh;
+}
+
+.item{
+  text-align: center;
+  margin: 5%;
+  padding: 1%;
+  font-size:5vh; 
+}
+
+footer{
+  background-color: #f7f8fc;
+}

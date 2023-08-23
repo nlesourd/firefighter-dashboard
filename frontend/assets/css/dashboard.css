@@ -1,0 +1,71 @@
+#ch {
+    display: flex;
+    align-items: center; /* Centrage vertical */
+    justify-content: center; /* Centrage horizontal */
+    flex-wrap: wrap;
+    height: auto; /* Pleine hauteur de la fenêtre */
+    width:auto;
+    background-color: #f7f8fc;
+}
+
+.box {
+    text-align: center;
+    margin: 1%;
+    padding: 1%;
+    background-color: #ffffff;
+    border: 2px solid #949597;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 45%;
+    font-size: 6vh;
+}
+
+.box:hover{
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+.unite{
+    font-size: 4vh;
+}
+
+.passage{
+    opacity: 0.5;
+    font-size:6vh;
+}
+
+.nombre-VSAV{
+    font-size: 5vh;
+}
+
+.image-truck{
+    width: 7%;
+    height: 5%;
+    margin-bottom: 0px;
+}
+
+#alerte{
+    background-color: #ff5c5c;
+}
+  
+#pre-alerte{
+    background-color: #ffdd6f;
+}
+
+#explication{
+    text-align: center;
+    font-size: 5vh;
+    margin-bottom: 1%;
+}
+
+#compteur{
+    position: fixed; /* Position fixe pour le bouton */
+    bottom: 3%; /* Positionnement en haut */
+    left: 3%; /* Positionnement à gauche */
+    font-size: 5vh;
+}
+
+#alerte-sonore{
+    margin: auto;
+    font-size: 2vh;
+    color: #f7f8fc;
+}
